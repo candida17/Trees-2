@@ -5,37 +5,36 @@
 
 
 // Your code here along with comments explaining your approach
-//We get the pointer to each node by indexing on the preoder list and using Hash map we search for the root in inorder list
-//we recursively calculate the left and right subtree of root using start and end indices on inorder list
+//We get the pointer to each node by indexing on the postorder list and using Hash map we search for the root in inorder list
+//we recursively calculate the right and left subtree of root using start and end indices on inorder list
 //Recursion stops or returns null when start and end index cross each other
 class Solution {
-    int idx = 0; //pointer on preorder
-    HashMap<Integer,Integer> map;
-    public TreeNode buildTree(int[] preorder, int[] inorder) {
-        //Hash map to store indorder index
+    int idx; //index on postorder
+    HashMap<Integer, Integer> map;
+    public TreeNode buildTree(int[] inorder, int[] postorder) {
         this.map = new HashMap<>();
-        for(int i=0; i < inorder.length ; i++) {
+        this.idx = postorder.length - 1;
+        for(int i = 0; i < inorder.length ; i++) {
             map.put(inorder[i], i);
         }
-        return helper(preorder, 0, inorder.length - 1);
+        return helper(postorder, 0, inorder.length - 1);
     }
 
-    private TreeNode helper(int[] preorder, int start, int end) {
+    private TreeNode helper(int[] postorder, int start, int end) {
         //base
         if (start > end) return null;
         //logic
-        int rootVal = preorder[idx];
-        idx++;
+        int rootVal = postorder[idx];
+        idx--;
         TreeNode root = new TreeNode(rootVal);
-        //get the root index
+        //get the root value index in inorder list
         int rootIdx = map.get(rootVal);
-        //recursive call for left subtree
-        root.left = helper(preorder, start, rootIdx-1);
-        //recursive call for right subtree
-        root.right = helper(preorder, rootIdx+1, end);
-
+        //right
+        root.right = helper(postorder, rootIdx+1, end);
+        //left
+        root.left = helper(postorder, start, rootIdx - 1);
+    
         return root;
-
 
     }
 }
